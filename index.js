@@ -10,8 +10,8 @@ require("dotenv").config();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const clientId = "14R6A1yuTdnlhqYvb6G0w";
-const clientSecret = "UuOMuUCf4ohP7Z6MnxRYJjaW0hFzss7b";
+const clientId = "0VSjESYETTKDOdUFBLKJaw";
+const clientSecret = "iryNZT7M2OhVoJQccK9MgbTnSVppLJoQ";
 
 let accessToken = null;
 
