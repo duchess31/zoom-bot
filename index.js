@@ -105,7 +105,7 @@ app.post("/webhook", async (req, res) => {
       const joinUrl = `https://app.zoom.us/wc/${meetingId}/join?fromPWA=1&${signature}`;
 
       axios
-        .post("https:// https://zoom-bot-liard.vercel.app/join-meeting", {
+        .post("https://zoom-bot-liard.vercel.app/join-meeting", {
           joinUrl,
         })
         .then((response) => {
