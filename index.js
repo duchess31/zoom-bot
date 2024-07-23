@@ -171,35 +171,56 @@ app.post("/webhook", async (req, res) => {
 
 app.post('/join-meeting', async (req, res) => {
   const { joinUrl } = req.body;
+  console.log('Join URL received:', joinUrl);
 
   try {
+    console.log('Launching browser...');
     const browser = await puppeteer.launch({
       args: [...chrome.args, '--disable-setuid-sandbox'],
       executablePath: await chrome.executablePath,
       headless: chrome.headless,
     });
+    console.log('Browser launched.');
+
     const page = await browser.newPage();
+    console.log('New page created.');
+    
     await page.setViewport({ width: 1920, height: 1080 });
+    console.log('Viewport set.');
+
     await page.goto(joinUrl, { waitUntil: 'networkidle2' });
+    console.log('Navigated to join URL.');
+
     await page.waitForSelector('input#input-for-pwd', { timeout: 30000 });
+    console.log('Password input found.');
     await page.type('input#input-for-pwd', '311862');
+    console.log('Password typed.');
 
     await page.waitForSelector('input#input-for-name', { timeout: 30000 });
+    console.log('Name input found.');
     await page.type('input#input-for-name', 'BotN');
+    console.log('Name typed.');
 
     await page.waitForXPath('//*[@id="root"]/div/div[1]/div/div[2]/button');
     const [button] = await page.$x('//*[@id="root"]/div/div[1]/div/div[2]/button');
     if (button) {
+      console.log('Button found.');
       await button.click();
+      console.log('Button clicked.');
+    } else {
+      console.log('Button not found.');
     }
 
     console.log('Bot joined the meeting successfully.');
+    await browser.close();
     res.status(200).send('Bot joined the meeting successfully.');
   } catch (error) {
     console.error('Failed to join the meeting:', error);
-    res.status(500).send('Failed to join the meeting.');
+    res.status(500).send(`Failed to join the meeting. Error: ${error.message}`);
   }
 });
+
+
 
 const port = 3000;
 app.listen(port, () => {
