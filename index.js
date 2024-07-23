@@ -40,7 +40,7 @@ app.get("/callback", async (req, res) => {
       querystring.stringify({
         grant_type: "authorization_code",
         code: code,
-        redirect_uri: "https://a9bf-83-234-227-51.ngrok-free.app/callback",
+        redirect_uri: "https://zoom-bot-liard.vercel.app/callback",
       }),
       {
         headers: {
@@ -104,7 +104,7 @@ app.post("/webhook", async (req, res) => {
       const joinUrl = `https://app.zoom.us/wc/${meetingId}/join?fromPWA=1&${signature}`;
 
       axios
-        .post("https:// https://a9bf-83-234-227-51.ngrok-free.app/join-meeting", {
+        .post("https:// https://zoom-bot-liard.vercel.app/join-meeting", {
           joinUrl,
         })
         .then((response) => {
