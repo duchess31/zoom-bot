@@ -1,7 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const axios = require("axios");
-const puppeteer = require("puppeteer");
+const puppeteer = require('puppeteer-core');
+const chrome = require('chrome-aws-lambda');
 const querystring = require("querystring");
 const crypto = require("crypto");
 const app = express();
@@ -168,40 +169,35 @@ app.post("/webhook", async (req, res) => {
   res.status(200).send("Event received");
 });
 
-app.post("/join-meeting", async (req, res) => {
+app.post('/join-meeting', async (req, res) => {
   const { joinUrl } = req.body;
 
   try {
     const browser = await puppeteer.launch({
-      headless: false,
-      args: ["--disable-setuid-sandbox"],
-      ignoreHTTPSErrors: true,
+      args: [...chrome.args, '--disable-setuid-sandbox'],
+      executablePath: await chrome.executablePath,
+      headless: chrome.headless,
     });
     const page = await browser.newPage();
-    await page.setViewport({
-      width: 1920,
-      height: 1080,
-    });
-    await page.goto(joinUrl, { waitUntil: "networkidle2" });
-    await page.waitForSelector("input#input-for-pwd", { timeout: 30000 });
-    await page.type("input#input-for-pwd", "311862");
+    await page.setViewport({ width: 1920, height: 1080 });
+    await page.goto(joinUrl, { waitUntil: 'networkidle2' });
+    await page.waitForSelector('input#input-for-pwd', { timeout: 30000 });
+    await page.type('input#input-for-pwd', '311862');
 
-    await page.waitForSelector("input#input-for-name", { timeout: 30000 });
-    await page.type("input#input-for-name", "BotN");
+    await page.waitForSelector('input#input-for-name', { timeout: 30000 });
+    await page.type('input#input-for-name', 'BotN');
 
     await page.waitForXPath('//*[@id="root"]/div/div[1]/div/div[2]/button');
-    const [button] = await page.$x(
-      '//*[@id="root"]/div/div[1]/div/div[2]/button'
-    );
+    const [button] = await page.$x('//*[@id="root"]/div/div[1]/div/div[2]/button');
     if (button) {
       await button.click();
     }
 
-    console.log("Bot joined the meeting successfully.");
-    res.status(200).send("Bot joined the meeting successfully.");
+    console.log('Bot joined the meeting successfully.');
+    res.status(200).send('Bot joined the meeting successfully.');
   } catch (error) {
-    console.error("Failed to join the meeting:", error);
-    res.status(500).send("Failed to join the meeting.");
+    console.error('Failed to join the meeting:', error);
+    res.status(500).send('Failed to join the meeting.');
   }
 });
 
